@@ -13,9 +13,10 @@ import { AuthContext } from '../../context/authContext';
 interface SignInProps {
   handleClose: () => void;
   switchToSignUp: () => void;
+  redirectPath?: string; // New optional prop
 }
 
-const SignIn: React.FC<SignInProps> = ({ handleClose, switchToSignUp }) => {
+const SignIn: React.FC<SignInProps> = ({ handleClose, switchToSignUp, redirectPath = '/buy-tickets' }) => {
   const { signIn } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -32,12 +33,12 @@ const SignIn: React.FC<SignInProps> = ({ handleClose, switchToSignUp }) => {
     setIsSubmitting(false);
     if (result.success) {
       handleClose();
-      navigate('/buy-tickets'); // Redirect to BuyTickets after successful login
+      navigate(redirectPath); // Navigate based on redirectPath prop
     } else {
       setError(result.message || 'Sign in failed');
     }
   };
-
+  
   const handleCancel = () => {
     setEmail('');
     setPassword('');
@@ -48,7 +49,7 @@ const SignIn: React.FC<SignInProps> = ({ handleClose, switchToSignUp }) => {
   return (
     <Box sx={{ mt: 2 }}>
       <Typography variant="h6" gutterBottom>
-        Sign In
+        Sign In 
       </Typography>
       <TextField
         label="Email"

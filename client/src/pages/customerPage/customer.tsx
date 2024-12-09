@@ -1,14 +1,19 @@
 import React from 'react';
-import { Typography, Box, Card, CardContent, CardMedia, Grid } from '@mui/material';
-import cardData from './customerData';
+import { Typography, Box, Card, CardContent, CardMedia, Grid, Button } from '@mui/material';
+import cardData from './cardData';
 import { useNavigate } from 'react-router-dom';
+import { ArrowForward } from '@mui/icons-material';
 
 const Customer: React.FC = () => {
   const navigate = useNavigate();
 
-const handleBookTicket = () => {
-  navigate('/buy-tickets');
-}
+  const handleBookTicket = () => {
+    navigate('/buy-tickets');
+  };
+
+  const handleVendorClick = () => {
+    navigate('/vendor'); // Adjust path as needed
+  };
 
   return (
     <Box
@@ -27,6 +32,7 @@ const handleBookTicket = () => {
           paddingBottom: 4,
           display: 'flex',
           justifyContent: 'center',
+          position: 'relative', // Positioning container to align button
         }}
       >
         <Typography
@@ -38,9 +44,32 @@ const handleBookTicket = () => {
             textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
           }}
         >
-          Welcome to Planetarium Ticketing System
-        </Typography>
-      </Box>
+          Welcome to GalaxyGate Planetarium Ticketing System
+          </Typography>
+
+        {/* Vendor Button */}
+        <Button
+          onClick={handleVendorClick}
+          sx={{
+            position: 'absolute',
+            top: 16, // Adjust top position
+            right: 16, // Adjust right position
+            backgroundColor: '#B0B0B0', // Ash color
+            color: '#000000',
+            fontWeight: 'bold',
+            padding: '6px 16px',
+            borderRadius: '4px',
+            '&:hover': {
+              backgroundColor: '#9E9E9E', // Darker shade on hover
+            },
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          Vendor
+          <ArrowForward sx={{ marginRight: 1 }} />
+        </Button>
+        </Box>
 
       {/* New Section with Image and Text */}
       <Box
@@ -55,8 +84,7 @@ const handleBookTicket = () => {
           alignItems: 'center',
         }}
       >
-        <Box
-        />
+        <Box />
         <Typography
           variant="h6"
           sx={{

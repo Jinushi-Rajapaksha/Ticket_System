@@ -16,7 +16,7 @@ interface SignUpProps {
 }
 
 const SignUp: React.FC<SignUpProps> = ({ handleClose, switchToSignIn }) => {
-  const { CustomersignUp } = useContext(AuthContext);
+  const { VendorsignUp } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // Input States
@@ -95,7 +95,7 @@ const SignUp: React.FC<SignUpProps> = ({ handleClose, switchToSignIn }) => {
 
     // Proceed with sign up
     setIsSubmitting(true);
-    const result = await CustomersignUp(name, email, password);
+    const result = await VendorsignUp(name, email, password);
     setIsSubmitting(false);
     if (result.success) {
       handleClose();
