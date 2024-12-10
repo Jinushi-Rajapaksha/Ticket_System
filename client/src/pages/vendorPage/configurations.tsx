@@ -58,23 +58,26 @@ const Configurations: React.FC = () => {
 
   // Replace with your actual backend API endpoints
   const API_BASE_URL = 'http://localhost:5000/api'; // Example base URL
-  const CONFIG_ENDPOINT = `${API_BASE_URL}/configurations`;
+  const CONFIG_ENDPOINT = `${API_BASE_URL}/configuration/`;
 
   // Fetch existing configurations on component mount
-  useEffect(() => {
-    const fetchConfigurations = async () => {
-      try {
-        const response = await axios.get<Configuration>(CONFIG_ENDPOINT);
-        setConfig(response.data);
-        setIsEditing(true); // If configurations exist, enable editing
-      } catch (error) {
-        // If no configurations found (e.g., 404), remain in add mode
-        setIsEditing(false);
-      }
-    };
+// Fetch existing configurations on component mount
+useEffect(() => {
+  const fetchConfigurations = async () => {
+    try {
+      const response = await axios.get(CONFIG_ENDPOINT);
+      const configData = response.data.data; 
 
-    fetchConfigurations();
-  }, [CONFIG_ENDPOINT]);
+      setConfig(configData);
+      setIsEditing(true); // If configurations exist, enable editing
+    } catch (error) {
+      console.error('Failed to fetch configurations', error);
+      setIsEditing(false);
+    }
+  };
+
+  fetchConfigurations();
+}, [CONFIG_ENDPOINT]);
 
   // Handle input changes
   const handleChange = (
@@ -140,9 +143,9 @@ const Configurations: React.FC = () => {
       });
       return;
     }
-
+  
     try {
-      await axios.put(CONFIG_ENDPOINT, config);
+      await axios.put('http://localhost:5000/api/configuration/update', config);
       setSnackbar({
         open: true,
         message: 'Configurations updated successfully!',
@@ -156,7 +159,7 @@ const Configurations: React.FC = () => {
       });
     }
   };
-
+  
   // Handle Next (Navigate to VendorDashboard)
   const handleNext = () => {
     navigate('/vendor-dashboard');
@@ -242,12 +245,12 @@ const Configurations: React.FC = () => {
             helperText={errors.totalTickets}
             InputProps={{ inputProps: { min: 0 } }}
             InputLabelProps={{
-                sx: {
+              shrink: true, // Ensure the label stays above the input
+              sx: {
                 fontSize: '1.2rem', // Increase font size
-                fontWeight: 'bold',  // Make label bold
-                },
-            }}
-            />
+                fontWeight: 'bold', // Make label bold
+              },
+            }}            />
         </Grid>
           {/* Ticket Release Rate */}
           <Grid item xs={12} sm={6}>
@@ -264,6 +267,7 @@ const Configurations: React.FC = () => {
               helperText={errors.ticketReleaseRate}
               InputProps={{ inputProps: { min: 0 } }}
               InputLabelProps={{
+                shrink: true,
                 sx: {
                 fontSize: '1.2rem', // Increase font size
                 fontWeight: 'bold',  // Make label bold
@@ -287,6 +291,7 @@ const Configurations: React.FC = () => {
               helperText={errors.customerRetrievalRate}
               InputProps={{ inputProps: { min: 0 } }}
               InputLabelProps={{
+                shrink: true,
                 sx: {
                 fontSize: '1.2rem', // Increase font size
                 fontWeight: 'bold',  // Make label bold
@@ -310,6 +315,7 @@ const Configurations: React.FC = () => {
               helperText={errors.maxTicketCapacity}
               InputProps={{ inputProps: { min: 0 } }}
               InputLabelProps={{
+                shrink: true,
                 sx: {
                 fontSize: '1.2rem', // Increase font size
                 fontWeight: 'bold',  // Make label bold

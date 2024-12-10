@@ -17,7 +17,7 @@ function App() {
           <Route path="/" element={<Customer />} />
           <Route path="/buy-tickets" element={<BuyTickets />} />
           <Route path="/vendor" element={<Vendor/>} />
-          <Route path="/vendorDashboard" element={<VendorDashboard />} />
+          <Route path="/vendor-dashboard" element={<VendorDashboard />} />
           <Route path="/configurations" element={<Configurations />} />
 
           {/* Protected Routes */}

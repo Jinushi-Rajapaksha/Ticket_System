@@ -20,6 +20,7 @@ import TicketHistory from './ticketHistory';
 import TicketIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 import StopIcon from '@mui/icons-material/Block';
 import SummaryCard from './summaryCard';
+import axios from 'axios';
 
 const VendorDashboard: React.FC = () => {
   // State variables
@@ -45,27 +46,51 @@ const VendorDashboard: React.FC = () => {
     setOpenDialog(false);
   };
 
-  const handleReleaseTickets = () => {
+  const handleReleaseTickets = async () => {
     if (ticketCount <= 0) {
       setSnackbar({ open: true, message: 'Please enter a valid number of tickets.', severity: 'error' });
       return;
     }
-
-    const newTotal = totalTickets + ticketCount;
-    setTotalTickets(newTotal);
-    setIsAdding(true);
-
-    const newEntry = {
-      id: history.length + 1,
-      count: ticketCount,
-      date: new Date().toLocaleString(),
-    };
-    setHistory([newEntry, ...history]);
-
-    setSnackbar({ open: true, message: `${ticketCount} tickets released successfully!`, severity: 'success' });
-    setOpenDialog(false);
+  
+    try {
+      // 1. Start the vendor ticket releasing process on the backend
+      const response = await axios.post('http://localhost:5000/api/vendor/start', {
+        ticketAmount: ticketCount
+      });
+  
+      if (response.data.success) {
+        setSnackbar({
+          open: true,
+          message: `${ticketCount} tickets release process started successfully!`,
+          severity: 'success',
+        });
+        setIsAdding(true);
+        setOpenDialog(false);
+  
+        // 2. Fetch the updated history from the backend
+        try {
+          const historyResponse = await axios.get('http://localhost:5000/api/vendor/history');
+          if (historyResponse.data.success) {
+            setHistory(historyResponse.data.data);
+          } else {
+            console.error('Failed to fetch updated history:', historyResponse.data.error);
+          }
+        } catch (historyError: any) {
+          console.error('Error fetching updated history:', historyError);
+        }
+      } else {
+        setSnackbar({ open: true, message: 'Failed to start releasing tickets.', severity: 'error' });
+      }
+    } catch (error: any) {
+      console.error('Error starting vendor ticket release:', error);
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.error || 'Failed to start releasing tickets.',
+        severity: 'error',
+      });
+    }
   };
-
+  
   const handleStopTickets = () => {
     setIsAdding(false);
     setSnackbar({ open: true, message: 'Stopped adding new tickets.', severity: 'info' });
