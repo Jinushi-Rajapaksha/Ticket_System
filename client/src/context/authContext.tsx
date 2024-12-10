@@ -58,24 +58,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const CustomersignUp = async (email: string, password: string) => {
+  const CustomersignUp = async (name: string, email: string, password: string) => {
     try {
-      // Replace with your backend sign-up endpoint
       const response = await fetch('https://your-backend.com/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password }), // Added name here
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to sign up');
       }
-
+  
       const data = await response.json();
-      const token = data.accessToken; // Adjust based on your backend response
+      const token = data.accessToken;
       setAuthToken(token);
       localStorage.setItem('authToken', token);
       return { success: true };
@@ -84,25 +83,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return { success: false, message: error.message };
     }
   };
-
-  const VendorsignUp = async (email: string, password: string) => {
+  
+  const VendorsignUp = async (name: string, email: string, password: string) => {
     try {
-      // Replace with your backend sign-up endpoint
       const response = await fetch('https://your-backend.com/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password }), // Added name here
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to sign up');
       }
-
+  
       const data = await response.json();
-      const token = data.accessToken; // Adjust based on your backend response
+      const token = data.accessToken;
       setAuthToken(token);
       localStorage.setItem('authToken', token);
       return { success: true };
@@ -111,6 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return { success: false, message: error.message };
     }
   };
+  
 
   const signOut = () => {
     setAuthToken(null);

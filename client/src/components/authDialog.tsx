@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
-import SignUp from '../pages/auth/customerSignUp';
 import SignIn from '../pages/auth/customerLogin';
+import SignUp from '../pages/auth/signUp';
 
 interface AuthDialogProps {
   open: boolean;
@@ -10,11 +10,10 @@ interface AuthDialogProps {
 }
 
 const AuthDialog: React.FC<AuthDialogProps> = ({ open, handleClose, userType = 'customer' }) => {
-  const [isSignUp, setIsSignUp] = useState<boolean>(false); // Track if the dialog should show SignUp or SignIn
-  const [isSignIn, setIsSignIn] = useState<boolean>(true);
+  const [authState, setAuthState] = useState<'signIn' | 'signUp'>('signIn'); // Combine both states
 
-  const switchToSignIn = () => setIsSignUp(false);
-  const switchToSignUp = () => setIsSignUp(true);
+  const switchToSignIn = () => setAuthState('signIn');
+  const switchToSignUp = () => setAuthState('signUp');
 
   const redirectPath = userType === 'vendor' ? '/configurations' : '/buy-tickets';
 
@@ -27,29 +26,31 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, handleClose, userType = '
           padding: '10px 20px',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center', // Centers the content
-          gap: 0, // Reduced gap between logo and title
+          alignItems: 'center',
+          gap: 0,
         }}>
-        {/* Logo above title */}
         <img 
           src="/src/assets/images/logo.png" 
           alt="GalaxyGate Logo" 
-          style={{ width: '100px' }} // Adjusted logo size
+          style={{ width: '100px' }} 
         />
-        {/* Conditional Title based on isSignUp */}
-        {isSignUp ? 'Sign Up to GalaxyGate' : 'Sign In to GalaxyGate'}
+        {authState === 'signUp' ? 'Sign Up to GalaxyGate' : 'Sign In to GalaxyGate'}
       </DialogTitle>
       <DialogContent>
-        {isSignIn ? (
+        {authState === 'signIn' ? (
           <SignIn
             handleClose={handleClose}
             switchToSignUp={switchToSignUp}
-            redirectPath={redirectPath} // Pass redirectPath here
+            redirectPath={redirectPath}
           />
         ) : (
-          <SignUp handleClose={handleClose} switchToSignIn={switchToSignIn} />
+          <SignUp
+            handleClose={handleClose}
+            switchToSignIn={switchToSignIn}
+            userType={userType}
+          />
         )}
-      </DialogContent>  
+      </DialogContent>
     </Dialog>
   );
 };

@@ -135,7 +135,7 @@ const VendorDashboard: React.FC = () => {
           onClick={handleOpenDialog}
           startIcon={<TicketIcon />}
         >
-          Release Tickets
+          Start Release Tickets
         </Button>
         <Button
               variant="outlined"
