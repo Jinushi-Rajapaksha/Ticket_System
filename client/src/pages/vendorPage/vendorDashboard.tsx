@@ -1,5 +1,5 @@
 // src/pages/VendorDashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Typography,
@@ -12,31 +12,82 @@ import {
   TextField,
   Snackbar,
   Alert,
+  IconButton,
 } from '@mui/material';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
-import TicketHistory from './ticketHistory';
 import TicketIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 import StopIcon from '@mui/icons-material/Block';
-import SummaryCard from './summaryCard';
+import LogoutIcon from '@mui/icons-material/Logout';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+import TicketHistory from './ticketHistory';
+import SummaryCard from './summaryCard';
+
+// If you have an AuthContext that provides signOut:
+import { AuthContext } from '../../context/authContext';
 
 const VendorDashboard: React.FC = () => {
-  // State variables
-  const [totalTickets, setTotalTickets] = useState<number>(1500);
+  const [maximumTicketCapacity, setMaximumTicketCapacity] = useState<number>(1500);
   const [soldTickets, setSoldTickets] = useState<number>(750);
   const [isAdding, setIsAdding] = useState<boolean>(true);
   const [history, setHistory] = useState<{ id: number; count: number; date: string }[]>([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [ticketCount, setTicketCount] = useState<number>(0);
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' | 'info' }>({
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error' | 'info'
+  }>({
     open: false,
     message: '',
     severity: 'success',
   });
 
-  // Handlers for Dialog
+  const { signOut } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        
+        // Fetch configuration
+        const configResponse = await axios.get('http://localhost:5000/api/configuration/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (configResponse.data.success && configResponse.data.data) {
+          const configData = configResponse.data.data;
+          setMaximumTicketCapacity(configData.maxTicketCapacity);
+        } else {
+          console.error('Failed to fetch configuration:', configResponse.data.error);
+        }
+
+        // Fetch ticket pool status for soldTickets
+        const statusResponse = await axios.get('http://localhost:5000/api/ticketPool/status', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (statusResponse.data.success && statusResponse.data.data) {
+          setSoldTickets(statusResponse.data.data.soldTickets);
+        } else {
+          console.error('Failed to fetch ticket pool status:', statusResponse.data.error);
+        }
+      } catch (error: any) {
+        console.error('Error fetching initial data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleOpenDialog = () => {
     setTicketCount(0);
     setOpenDialog(true);
@@ -51,13 +102,20 @@ const VendorDashboard: React.FC = () => {
       setSnackbar({ open: true, message: 'Please enter a valid number of tickets.', severity: 'error' });
       return;
     }
-  
+
     try {
-      // 1. Start the vendor ticket releasing process on the backend
-      const response = await axios.post('http://localhost:5000/api/vendor/start', {
-        ticketAmount: ticketCount
-      });
-  
+      const token = localStorage.getItem('authToken');
+
+      // Start the vendor ticket releasing process
+      const response = await axios.post('http://localhost:5000/api/vendor/start',
+        { ticketAmount: ticketCount },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
       if (response.data.success) {
         setSnackbar({
           open: true,
@@ -66,10 +124,16 @@ const VendorDashboard: React.FC = () => {
         });
         setIsAdding(true);
         setOpenDialog(false);
-  
-        // 2. Fetch the updated history from the backend
+
+        // Fetch updated history
         try {
-          const historyResponse = await axios.get('http://localhost:5000/api/vendor/history');
+          const historyToken = localStorage.getItem('authToken');
+          const historyResponse = await axios.get('http://localhost:5000/api/vendor/history', {
+            headers: {
+              Authorization: `Bearer ${historyToken}`
+            }
+          });
+
           if (historyResponse.data.success) {
             setHistory(historyResponse.data.data);
           } else {
@@ -90,21 +154,57 @@ const VendorDashboard: React.FC = () => {
       });
     }
   };
-  
-  const handleStopTickets = () => {
-    setIsAdding(false);
-    setSnackbar({ open: true, message: 'Stopped adding new tickets.', severity: 'info' });
+
+  const handleStopTickets = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const stopResponse = await axios.post('http://localhost:5000/api/vendor/stop', {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (stopResponse.data.success) {
+        setIsAdding(false);
+        setSnackbar({ open: true, message: 'Stopped adding new tickets.', severity: 'info' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to stop releasing tickets.', severity: 'error' });
+      }
+    } catch (error: any) {
+      console.error('Error stopping vendor ticket release:', error);
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.error || 'Failed to stop releasing tickets.',
+        severity: 'error',
+      });
+    }
   };
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  // Calculate remaining tickets
-  const remainingTickets = totalTickets - soldTickets;
+  const handleSignOut = () => {
+    signOut();
+    navigate('/'); // Redirect to home after sign-out
+  };
+
+  // Calculate available tickets
+  const availableTickets = maximumTicketCapacity - soldTickets;
 
   return (
-    <Box sx={{ padding: 4, minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+    <Box sx={{ padding: 4, minHeight: '100vh', backgroundColor: '#f5f5f5', position: 'relative' }}>
+      {/* Logout Icon Button at the top-right corner */}
+      <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+        <IconButton
+          onClick={handleSignOut}
+          color="primary"
+          aria-label="logout"
+        >
+          <LogoutIcon />
+        </IconButton>
+      </Box>
+
       {/* Welcome Message */}
       <Typography
         variant="h4"
@@ -121,13 +221,13 @@ const VendorDashboard: React.FC = () => {
 
       {/* Summary Cards */}
       <Grid container spacing={4}>
-        {/* Total Tickets */}
+        {/* Maximum Ticket Capacity */}
         <Grid item xs={12} sm={6} md={4}>
           <SummaryCard
-            title="Total Tickets"
-            value={totalTickets}
+            title="Maximum Ticket Capacity"
+            value={maximumTicketCapacity}
             icon={<ConfirmationNumberIcon />}
-            color="#1976d2" // MUI primary color
+            color="#1976d2"
           />
         </Grid>
 
@@ -137,17 +237,17 @@ const VendorDashboard: React.FC = () => {
             title="Sold Tickets"
             value={soldTickets}
             icon={<EventBusyIcon />}
-            color="#d32f2f" // MUI error color
+            color="#d32f2f"
           />
         </Grid>
 
-        {/* Remaining Tickets */}
+        {/* Available Tickets */}
         <Grid item xs={12} sm={6} md={4}>
           <SummaryCard
-            title="Remaining Tickets"
-            value={remainingTickets}
+            title="Available Tickets"
+            value={availableTickets}
             icon={<EventAvailableIcon />}
-            color="#388e3c" // MUI success color
+            color="#388e3c"
           />
         </Grid>
       </Grid>
@@ -163,14 +263,14 @@ const VendorDashboard: React.FC = () => {
           Start Release Tickets
         </Button>
         <Button
-              variant="outlined"
-              color="warning"
-              startIcon={<StopIcon />}
-              onClick={handleStopTickets}
-              style={{
-                backgroundColor: '#db2a41',
-                color: '#fff',
-            }}
+          variant="outlined"
+          color="warning"
+          startIcon={<StopIcon />}
+          onClick={handleStopTickets}
+          style={{
+            backgroundColor: '#db2a41',
+            color: '#fff',
+          }}
         >
           Stop Release Tickets
         </Button>

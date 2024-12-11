@@ -4,8 +4,8 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 interface AuthContextType {
   authToken: string | null;
   signIn: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
-  CustomersignUp: (name:string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
-  VendorsignUp:(name:string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  CustomersignUp: (name: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  VendorsignUp: (name: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   signOut: () => void;
 }
 
@@ -33,7 +33,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      // Replace with your backend sign-in endpoint
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
@@ -48,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      const token = data.accessToken; // Adjust based on your backend response
+      const token = data.token; // Ensure this matches your backend's response property
       setAuthToken(token);
       localStorage.setItem('authToken', token);
       return { success: true };
@@ -60,56 +59,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const CustomersignUp = async (name: string, email: string, password: string) => {
     try {
-      const response = await fetch('https://your-backend.com/api/auth/signup', {
+      const response = await fetch('http://localhost:5000/api/auth/register/customer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }), // Added name here
+        body: JSON.stringify({ name, email, password }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to sign up');
+        throw new Error(errorData.message || 'Failed to sign up as customer');
       }
-  
+
       const data = await response.json();
-      const token = data.accessToken;
+      const token = data.token; // Check backend response for token property
       setAuthToken(token);
       localStorage.setItem('authToken', token);
       return { success: true };
     } catch (error: any) {
-      console.error('Sign up error:', error);
+      console.error('Customer sign up error:', error);
       return { success: false, message: error.message };
     }
   };
-  
+
   const VendorsignUp = async (name: string, email: string, password: string) => {
     try {
-      const response = await fetch('https://your-backend.com/api/auth/signup', {
+      const response = await fetch('http://localhost:5000/api/auth/register/vendor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }), // Added name here
+        body: JSON.stringify({ name, email, password }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to sign up');
+        throw new Error(errorData.message || 'Failed to sign up as vendor');
       }
-  
+
       const data = await response.json();
-      const token = data.accessToken;
+      const token = data.token; // Check backend response for token property
       setAuthToken(token);
       localStorage.setItem('authToken', token);
       return { success: true };
     } catch (error: any) {
-      console.error('Sign up error:', error);
+      console.error('Vendor sign up error:', error);
       return { success: false, message: error.message };
     }
   };
-  
 
   const signOut = () => {
     setAuthToken(null);

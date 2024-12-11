@@ -1,6 +1,7 @@
 const { removeTickets,cancelTicket } = require('./ticketPoolController');
 const { validationResult } = require('express-validator');
 const Configuration = require('../models/configuration');
+const Ticket = require('../models/ticketPool');
 
 const customerLastPurchase = {};
 
@@ -50,6 +51,27 @@ exports.purchaseTickets = async (req, res) => {
     }
   } catch (err) {
     console.error('Error purchasing tickets:', err);
+    res.status(500).json({ success: false, error: 'Server Error' });
+  }
+};
+
+exports.viewPurchasedTickets = async (req, res) => {
+  const customerId = req.customer.customerId; // Assuming req.customer is set by your auth middleware
+
+  try {
+    // Find all tickets belonging to this customer that are sold
+    const purchasedTickets = await Ticket.find({ customerId, sold: true });
+
+    res.status(200).json({
+      success: true,
+      data: purchasedTickets.map(ticket => ({
+        ticketId: ticket.ticketId,
+        soldAt: ticket.soldAt,
+        vendorId: ticket.vendorId,
+      })),
+    });
+  } catch (err) {
+    console.error('Error viewing purchased tickets:', err);
     res.status(500).json({ success: false, error: 'Server Error' });
   }
 };

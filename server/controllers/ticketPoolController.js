@@ -1,6 +1,7 @@
 const Ticket = require('../models/ticketPool');
 const Configuration = require('../models/configuration');
 const { Mutex } = require('async-mutex');
+const TicketHistory = require('../models/ticketHistory');
 
 const ticketPoolMutex = new Mutex();
 
@@ -49,6 +50,14 @@ exports.addTickets = async (vendorId, ticketAmount) => {
 
     // Insert tickets into the database
     await Ticket.insertMany(tickets);
+
+    // // Add a history record
+    // await TicketHistory.create({
+    //   vendorId,
+    //   count: ticketAmount, 
+    //   date: new Date()
+    // });
+
     console.log(`Vendor ${vendorId}: Added ${tickets.length} tickets.`);
   } finally {
     release();

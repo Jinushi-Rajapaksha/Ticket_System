@@ -3,6 +3,7 @@ const {
   addTickets,
   startVendor,
   stopVendor,
+  getHistory
 } = require('../controllers/vendorController');
 const { protect, authorize } = require('../middleWare/authMiddleware');
 const { getVendorByUser } = require('../middleWare/vendorMiddleware');
@@ -28,5 +29,7 @@ router.post('/start', startVendor);
 
 // Stop vendor
 router.post('/stop', stopVendor);
+
+router.get('/history', getHistory);
 
 module.exports = router;

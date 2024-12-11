@@ -1,5 +1,5 @@
 const express = require('express');
-const { purchaseTickets, cancelTicket } = require('../controllers/customerController');
+const { purchaseTickets, cancelTicket,viewPurchasedTickets } = require('../controllers/customerController');
 const { protect, authorize } = require('../middleWare/authMiddleware');
 const { getCustomerByUser } = require('../middleWare/customerMiddleware');
 const { check } = require('express-validator');
@@ -18,6 +18,8 @@ router.post(
     ],
     purchaseTickets
   );
+
+router.get('/purchased-tickets', protect, authorize('customer'), viewPurchasedTickets);
 
 // Cancel ticket
 router.post('/cancel', cancelTicket);

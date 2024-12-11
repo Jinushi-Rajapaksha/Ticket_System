@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const Ticket = require('../models/ticketPool');
 const Configuration = require('../models/configuration');
 const { Mutex } = require('async-mutex');
+const TicketHistory = require('../models/ticketHistory');
 
 const ticketPoolMutex = new Mutex();
 const vendorIntervals = {}; // In-memory storage for vendors' interval IDs
@@ -78,6 +79,12 @@ exports.startVendor = async (req, res) => {
           });
         }
         await Ticket.insertMany(tickets);
+        await TicketHistory.create({
+          vendorId: vendor.vendorId,
+          count: tickets.length, 
+          date: new Date()
+        });
+
         console.log(`Vendor ${vendor.vendorId}: Added ${tickets.length} tickets.`);
       } catch (err) {
         console.error('Error adding tickets:', err);
@@ -123,4 +130,13 @@ exports.stopVendor = async (req, res) => {
   }
 };
 
-
+exports.getHistory = async (req, res) => {
+  try {
+    const vendor = req.vendor; // Assuming vendor is attached to req by some auth middleware
+    const history = await TicketHistory.find({ vendorId: vendor.vendorId }).sort({ date: -1 });
+    res.status(200).json({ success: true, data: history });
+  } catch (err) {
+    console.error('Error fetching history:', err);
+    res.status(500).json({ success: false, error: 'Server Error' });
+  }
+};
