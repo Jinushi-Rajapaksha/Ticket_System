@@ -121,7 +121,7 @@ const BuyTickets: React.FC = () => {
         }
       } catch (error: any) {
         console.error('Error confirming tickets:', error);
-        setSnackbarMessage('Failed to confirm tickets.');
+        setSnackbarMessage('Failed to confirm tickets.Invalid user role.');
         setSnackbarSeverity('error');
         setSnackbarOpen(true);
       }
