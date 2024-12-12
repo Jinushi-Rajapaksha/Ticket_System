@@ -1,4 +1,3 @@
-// src/components/BuyTickets.tsx
 import React, { useState, useContext, useEffect } from 'react';
 import TicketIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 import {
@@ -39,7 +38,6 @@ interface PurchasedTicket {
 const BuyTickets: React.FC = () => {
   const { authToken, signOut } = useContext(AuthContext);
   const navigate = useNavigate();
-
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [ticketQuantity, setTicketQuantity] = useState<number>(1);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
@@ -48,12 +46,8 @@ const BuyTickets: React.FC = () => {
   const [authDialogOpen, setAuthDialogOpen] = useState<boolean>(false);
   const [hasConfirmed, setHasConfirmed] = useState<boolean>(false);
   const [availableTickets, setAvailableTickets] = useState<number>(0);
-
-  // State for Purchased Tickets Dialog
   const [purchasedDialogOpen, setPurchasedDialogOpen] = useState<boolean>(false);
   const [purchasedTickets, setPurchasedTickets] = useState<PurchasedTicket[]>([]);
-
-  // State for Cancel Ticket Dialog
   const [cancelDialogOpen, setCancelDialogOpen] = useState<boolean>(false);
   const [cancelTicketId, setCancelTicketId] = useState<string>('');
 
@@ -65,7 +59,7 @@ const BuyTickets: React.FC = () => {
     'Holiday'
   ];
 
-  // Fetch availableTickets from the backend when component mounts or when authToken changes
+  // Fetch availableTickets from the backend 
   useEffect(() => {
     const fetchAvailableTickets = async () => {
       try {
@@ -167,7 +161,6 @@ const BuyTickets: React.FC = () => {
 
     try {
       const token = authToken;
-      // Call cancel endpoint with ticketId
       const response = await axios.post('http://localhost:5000/api/customer/cancel',
         { ticketId: cancelTicketId.trim() },
         {
@@ -200,7 +193,6 @@ const BuyTickets: React.FC = () => {
     setAuthDialogOpen(false);
   };
 
-  // Fetch purchased tickets when the "Purchased Tickets" button is clicked
   const handleViewPurchasedTickets = async () => {
     if (!authToken) {
       setSnackbarMessage('You must be logged in to view purchased tickets.');
@@ -233,12 +225,10 @@ const BuyTickets: React.FC = () => {
     }
   };
 
-  // Close purchased tickets dialog
   const handleClosePurchasedDialog = () => {
     setPurchasedDialogOpen(false);
   };
 
-  // Watch for changes in authToken to set hasConfirmed after successful login
   useEffect(() => {
     if (authToken && authDialogOpen) {
       setHasConfirmed(true);
@@ -251,7 +241,6 @@ const BuyTickets: React.FC = () => {
 
   return (
     <>
-      {/* GlobalStyles to set the background image on the body */}
       <GlobalStyles
         styles={{
           body: {
@@ -292,7 +281,6 @@ const BuyTickets: React.FC = () => {
             paddingX: 2,
           }}
         >
-          {/* Header */}
           <Typography
             variant="h3"
             sx={{
@@ -306,9 +294,7 @@ const BuyTickets: React.FC = () => {
             Show Times
           </Typography>
 
-          {/* Layout: Card on left, Buttons on right */}
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 4 }}>
-            {/* Dates and Events Card (Left Side) */}
             <Card
               sx={{
                 width: '100%',
@@ -321,7 +307,6 @@ const BuyTickets: React.FC = () => {
             >
               <CardContent>
                 <Grid container spacing={2} columns={7}>
-                  {/* Days of the Week Header */}
                   {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
                     <Grid item xs={1} key={index} sx={{ textAlign: 'center' }}>
                       <Box
@@ -381,9 +366,7 @@ const BuyTickets: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Buttons (Right Side), stacked vertically */}
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop:15 }}>
-              {/* Buy Ticket Button */}
               <Button
                 variant="contained"
                 color="primary"
@@ -473,7 +456,6 @@ const BuyTickets: React.FC = () => {
               }}
               role="presentation"
             >
-              {/* Title */}
               <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
                 Ticket Details
               </Typography>
@@ -485,7 +467,6 @@ const BuyTickets: React.FC = () => {
                 Available Tickets: {availableTickets}
               </Typography>
 
-              {/* Description Message */}
               <Typography variant="body2" sx={{ marginTop: 2, fontWeight: 'bold' }}>
                 Enter the number of tickets you want to buy:
               </Typography>

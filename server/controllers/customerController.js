@@ -9,20 +9,17 @@ exports.purchaseTickets = async (req, res) => {
   const customerId = req.customer.customerId;
   const { ticketAmount } = req.body;
 
-  // Handle validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ success: false, errors: errors.array() });
   }
 
   try {
-    // Fetch the configuration
     const config = await Configuration.findOne();
     if (!config) {
       return res.status(500).json({ success: false, error: 'Configuration not set.' });
     }
 
-    // Implement rate limiting based on customerRetrievalRate
     const currentTime = Date.now();
     const lastPurchaseTime = customerLastPurchase[customerId] || 0;
     const timeSinceLastPurchase = currentTime - lastPurchaseTime;
@@ -35,7 +32,6 @@ exports.purchaseTickets = async (req, res) => {
       });
     }
 
-    // Update last purchase time
     customerLastPurchase[customerId] = currentTime;
 
     const tickets = await removeTickets(customerId, ticketAmount);
@@ -59,7 +55,6 @@ exports.viewPurchasedTickets = async (req, res) => {
   const customerId = req.customer.customerId; // Assuming req.customer is set by your auth middleware
 
   try {
-    // Find all tickets belonging to this customer that are sold
     const purchasedTickets = await Ticket.find({ customerId, sold: true });
 
     res.status(200).json({
@@ -80,7 +75,6 @@ exports.cancelTicket = async (req, res) => {
   const customerId = req.customer.customerId;
   const { ticketId } = req.body;
 
-  // Validate ticketId
   if (!ticketId) {
     return res.status(400).json({ success: false, error: 'ticketId is required.' });
   }

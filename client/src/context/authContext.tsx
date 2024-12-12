@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
 interface AuthContextType {
@@ -47,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      const token = data.token; // Ensure this matches your backend's response property
+      const token = data.token; 
       setAuthToken(token);
       localStorage.setItem('authToken', token);
       return { success: true };
@@ -73,7 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      const token = data.token; // Check backend response for token property
+      const token = data.token; 
       setAuthToken(token);
       localStorage.setItem('authToken', token);
       return { success: true };
@@ -99,7 +98,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      const token = data.token; // Check backend response for token property
+      const token = data.token; 
       setAuthToken(token);
       localStorage.setItem('authToken', token);
       return { success: true };

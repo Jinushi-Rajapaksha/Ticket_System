@@ -25,14 +25,11 @@ const sendTokenResponse = (user, statusCode, res) => {
   });
 };
 
-// @desc    Register a new customer
-// @route   POST /api/auth/register/customer
-// @access  Public
+// Register a new customer
 exports.registerCustomer = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // Check if user already exists
     let user = await User.findOne({ email });
 
     if (user) {
@@ -41,20 +38,18 @@ exports.registerCustomer = async (req, res) => {
         .json({ success: false, error: 'User already exists' });
     }
 
-    // Create new user with role set to 'customer'
     user = await User.create({
       name,
       email,
-      password, // Remember to hash passwords in production
+      password, 
       role: 'customer',
     });
 
-     // Create Customer entry
   const customerCount = await Customer.countDocuments();
   await Customer.create({
     user: user._id,
     customerId: customerCount + 1,
-    retrievalInterval: 1000, // Default or get from req.body
+    retrievalInterval: 1000,
   });
 
     sendTokenResponse(user, 201, res);
@@ -64,14 +59,11 @@ exports.registerCustomer = async (req, res) => {
   }
 };
 
-// @desc    Register a new vendor
-// @route   POST /api/auth/register/vendor
-// @access  Public (or Protected, see note below)
+// Register a new vendor
 exports.registerVendor = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // Check if user already exists
     let user = await User.findOne({ email });
 
     if (user) {
@@ -80,7 +72,6 @@ exports.registerVendor = async (req, res) => {
         .json({ success: false, error: 'User already exists' });
     }
 
-    // Create new user with role set to 'vendor'
     user = await User.create({
       name,
       email,
@@ -93,8 +84,8 @@ exports.registerVendor = async (req, res) => {
   await Vendor.create({
     user: user._id,
     vendorId: vendorCount + 1,
-    ticketsPerRelease: 5, // Default or get from req.body
-    releaseInterval: 2000, // Default or get from req.body
+    ticketsPerRelease: 5, 
+    releaseInterval: 2000, 
   });
 
     sendTokenResponse(user, 201, res);
@@ -104,13 +95,10 @@ exports.registerVendor = async (req, res) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
+// Login user
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  // Validate email & password
   if (!email || !password) {
     return res
       .status(400)
@@ -118,7 +106,6 @@ exports.login = async (req, res) => {
   }
 
   try {
-    // Check for user and include password
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
@@ -127,7 +114,6 @@ exports.login = async (req, res) => {
         .json({ success: false, error: 'Invalid credentials' });
     }
 
-    // Check if password matches
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
@@ -143,9 +129,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// @desc    Get current logged in user
-// @route   GET /api/auth/me
-// @access  Private
+// Get current logged in user
 exports.getUser = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);

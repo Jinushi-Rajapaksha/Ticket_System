@@ -39,7 +39,6 @@ exports.addTickets = async (vendorId, ticketAmount) => {
       throw new Error('Max ticket capacity reached.');
     }
 
-    // Prepare ticket documents
     const tickets = [];
     for (let i = 0; i < ticketAmount; i++) {
       tickets.push({
@@ -48,15 +47,7 @@ exports.addTickets = async (vendorId, ticketAmount) => {
       });
     }
 
-    // Insert tickets into the database
     await Ticket.insertMany(tickets);
-
-    // // Add a history record
-    // await TicketHistory.create({
-    //   vendorId,
-    //   count: ticketAmount, 
-    //   date: new Date()
-    // });
 
     console.log(`Vendor ${vendorId}: Added ${tickets.length} tickets.`);
   } finally {
@@ -71,7 +62,6 @@ exports.removeTickets = async (customerId, ticketAmount) => {
     const tickets = await Ticket.find({ sold: false }).limit(ticketAmount);
 
     if (tickets.length === ticketAmount) {
-      // Update tickets to mark them as sold
       const ticketIds = tickets.map(ticket => ticket._id);
       await Ticket.updateMany(
         { _id: { $in: ticketIds } },
@@ -79,7 +69,6 @@ exports.removeTickets = async (customerId, ticketAmount) => {
       );
 
       console.log(`Customer ${customerId}: Purchased tickets ${ticketIds.join(', ')}.`);
-      // Fetch the updated tickets
       const updatedTickets = await Ticket.find({ _id: { $in: ticketIds } });
       return updatedTickets;
     } else {
@@ -98,7 +87,6 @@ exports.cancelTicket = async (customerId, ticketId) => {
     const ticket = await Ticket.findOne({ ticketId, customerId });
 
     if (ticket) {
-      // Update the ticket to mark it as unsold
       ticket.sold = false;
       ticket.customerId = null;
       ticket.soldAt = null;

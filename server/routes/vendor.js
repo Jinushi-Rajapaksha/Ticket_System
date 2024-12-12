@@ -24,10 +24,8 @@ router.post(
   addTickets
 );
 
-// Start vendor
 router.post('/start', startVendor);
 
-// Stop vendor
 router.post('/stop', stopVendor);
 
 router.get('/history', getHistory);

@@ -1,4 +1,3 @@
-// src/components/SignIn.tsx
 import React, { useState, useContext } from 'react';
 import {
   Typography,
@@ -13,7 +12,7 @@ import { AuthContext } from '../../context/authContext';
 interface SignInProps {
   handleClose: () => void;
   switchToSignUp: () => void;
-  redirectPath?: string; // New optional prop
+  redirectPath?: string; 
 }
 
 const SignIn: React.FC<SignInProps> = ({ handleClose, switchToSignUp, redirectPath = '/buy-tickets' }) => {

@@ -1,5 +1,3 @@
-// src/pages/Configurations.tsx
-
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -56,12 +54,9 @@ const Configurations: React.FC = () => {
   
   const navigate = useNavigate();
 
-  // Replace with your actual backend API endpoints
-  const API_BASE_URL = 'http://localhost:5000/api'; // Example base URL
+  const API_BASE_URL = 'http://localhost:5000/api'; 
   const CONFIG_ENDPOINT = `${API_BASE_URL}/configuration/`;
 
-  // Fetch existing configurations on component mount
-// Fetch existing configurations on component mount
 useEffect(() => {
   const fetchConfigurations = async () => {
     try {
@@ -167,7 +162,7 @@ useEffect(() => {
 
   // Handle Back (Navigate to Vendor Page)
   const handleBack = () => {
-    navigate('/vendor-page'); // Replace '/vendor-page' with your actual vendor page route
+    navigate('/vendor-page'); 
   };
 
   // Handle Clear (Reset Form Fields)
@@ -245,10 +240,10 @@ useEffect(() => {
             helperText={errors.totalTickets}
             InputProps={{ inputProps: { min: 0 } }}
             InputLabelProps={{
-              shrink: true, // Ensure the label stays above the input
+              shrink: true, 
               sx: {
-                fontSize: '1.2rem', // Increase font size
-                fontWeight: 'bold', // Make label bold
+                fontSize: '1.2rem', 
+                fontWeight: 'bold', 
               },
             }}            />
         </Grid>
@@ -269,8 +264,8 @@ useEffect(() => {
               InputLabelProps={{
                 shrink: true,
                 sx: {
-                fontSize: '1.2rem', // Increase font size
-                fontWeight: 'bold',  // Make label bold
+                fontSize: '1.2rem', 
+                fontWeight: 'bold',  
                 },
             }}
             />
@@ -293,8 +288,8 @@ useEffect(() => {
               InputLabelProps={{
                 shrink: true,
                 sx: {
-                fontSize: '1.2rem', // Increase font size
-                fontWeight: 'bold',  // Make label bold
+                fontSize: '1.2rem', 
+                fontWeight: 'bold',  
                 },
             }}
             />
@@ -317,8 +312,8 @@ useEffect(() => {
               InputLabelProps={{
                 shrink: true,
                 sx: {
-                fontSize: '1.2rem', // Increase font size
-                fontWeight: 'bold',  // Make label bold
+                fontSize: '1.2rem', 
+                fontWeight: 'bold',  
                 },
             }}
             />

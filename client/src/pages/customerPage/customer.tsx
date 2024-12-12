@@ -12,7 +12,7 @@ const Customer: React.FC = () => {
   };
 
   const handleVendorClick = () => {
-    navigate('/vendor'); // Adjust path as needed
+    navigate('/vendor'); 
   };
 
   return (
@@ -32,7 +32,7 @@ const Customer: React.FC = () => {
           paddingBottom: 4,
           display: 'flex',
           justifyContent: 'center',
-          position: 'relative', // Positioning container to align button
+          position: 'relative', 
         }}
       >
         <Typography
@@ -52,15 +52,15 @@ const Customer: React.FC = () => {
           onClick={handleVendorClick}
           sx={{
             position: 'absolute',
-            top: 16, // Adjust top position
-            right: 16, // Adjust right position
-            backgroundColor: '#B0B0B0', // Ash color
+            top: 16, 
+            right: 16, 
+            backgroundColor: '#B0B0B0', 
             color: '#000000',
             fontWeight: 'bold',
             padding: '6px 16px',
             borderRadius: '4px',
             '&:hover': {
-              backgroundColor: '#9E9E9E', // Darker shade on hover
+              backgroundColor: '#9E9E9E',
             },
             display: 'flex',
             alignItems: 'center',
@@ -75,7 +75,7 @@ const Customer: React.FC = () => {
       <Box
         sx={{
           width: '100%',
-          backgroundColor: '#2C2F3E', // Background color as requested
+          backgroundColor: '#2C2F3E', 
           paddingTop: 4,
           paddingBottom: 4,
           display: 'flex',
@@ -88,7 +88,7 @@ const Customer: React.FC = () => {
         <Typography
           variant="h6"
           sx={{
-            color: '#ffffff', // White text for better visibility on dark background
+            color: '#ffffff', 
             textAlign: 'center',
             marginBottom: 2,
           }}
@@ -96,9 +96,9 @@ const Customer: React.FC = () => {
           Planetarium shows and astronomy talks
         </Typography>
         <Box
-          onClick={handleBookTicket} // Add onClick handler
+          onClick={handleBookTicket} 
           sx={{
-            backgroundColor: '#00E676', // Color from the button in the image you provided
+            backgroundColor: '#00E676',
             padding: '8px 16px',
             borderRadius: '4px',
             cursor: 'pointer',

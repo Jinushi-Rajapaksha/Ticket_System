@@ -35,7 +35,6 @@ const UserSchema = new mongoose.Schema({
 
 // Method to compare entered password with stored password
 UserSchema.methods.matchPassword = async function (enteredPassword) {
-  // Since passwords are stored in plain text, a simple comparison suffices
   return enteredPassword === this.password;
 };
 

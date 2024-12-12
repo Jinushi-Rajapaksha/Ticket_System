@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
-import SignIn from '../pages/auth/customerLogin';
+import SignIn from '../pages/auth/login';
 import SignUp from '../pages/auth/signUp';
 
 interface AuthDialogProps {
   open: boolean;
   handleClose: () => void;
-  userType?: 'customer' | 'vendor'; // New prop to indicate user type
+  userType?: 'customer' | 'vendor'; // prop to indicate user type
 }
 
 const AuthDialog: React.FC<AuthDialogProps> = ({ open, handleClose, userType = 'customer' }) => {
-  const [authState, setAuthState] = useState<'signIn' | 'signUp'>('signIn'); // Combine both states
-
+  const [authState, setAuthState] = useState<'signIn' | 'signUp'>('signIn'); 
   const switchToSignIn = () => setAuthState('signIn');
   const switchToSignUp = () => setAuthState('signUp');
 

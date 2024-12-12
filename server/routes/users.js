@@ -4,7 +4,7 @@ const { authorize } = require('../middleWare/roleMiddleware');
 
 const router = express.Router();
 
-// Example protected route
+//  protected route
 router.get('/dashboard', protect, (req, res) => {
   res.json({
     success: true,
@@ -13,7 +13,7 @@ router.get('/dashboard', protect, (req, res) => {
   });
 });
 
-// Example route only accessible to vendors
+//  route only accessible to vendors
 router.post('/vendor-action', protect, authorize('vendor'), (req, res) => {
   res.json({
     success: true,
@@ -21,7 +21,7 @@ router.post('/vendor-action', protect, authorize('vendor'), (req, res) => {
   });
 });
 
-// Example route only accessible to customers
+// route only accessible to customers
 router.post('/customer-action', protect, authorize('customer'), (req, res) => {
   res.json({
     success: true,

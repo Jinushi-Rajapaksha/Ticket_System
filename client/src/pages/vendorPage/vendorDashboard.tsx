@@ -1,5 +1,3 @@
-// src/pages/VendorDashboard.tsx
-
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
@@ -22,22 +20,17 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import TicketIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 import StopIcon from '@mui/icons-material/Block';
 import LogoutIcon from '@mui/icons-material/Logout';
-import RefreshIcon from '@mui/icons-material/Refresh'; // Import Refresh Icon
+import RefreshIcon from '@mui/icons-material/Refresh'; 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
 import TicketHistory from './ticketHistory';
 import SummaryCard from './summaryCard';
-
-// If you have an AuthContext that provides signOut:
 import { AuthContext } from '../../context/authContext';
 
-// Define TypeScript interfaces for API responses
 interface ConfigurationResponse {
   success: boolean;
   data: {
     maxTicketCapacity: number;
-    // ... other configuration fields
   };
   error?: string;
 }
@@ -64,7 +57,6 @@ interface VendorHistoryResponse {
 }
 
 const VendorDashboard: React.FC = () => {
-  // State Variables
   const [maximumTicketCapacity, setMaximumTicketCapacity] = useState<number>(1500);
   const [soldTickets, setSoldTickets] = useState<number>(750);
   const [availableTickets, setAvailableTickets] = useState<number>(0);
@@ -87,9 +79,8 @@ const VendorDashboard: React.FC = () => {
   const { signOut } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Refactored fetchData to include fetching history
   const fetchData = async () => {
-    setIsFetching(true); // Start loading
+    setIsFetching(true); 
     try {
       const token = localStorage.getItem('authToken');
 
@@ -160,27 +151,23 @@ const VendorDashboard: React.FC = () => {
         severity: 'error',
       });
     } finally {
-      setIsFetching(false); // End loading
+      setIsFetching(false); 
     }
   };
 
-  // useEffect to fetch data on component mount
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Handler to open the Release Tickets dialog
   const handleOpenDialog = () => {
     setTicketCount(0);
     setOpenDialog(true);
   };
 
-  // Handler to close the Release Tickets dialog
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
 
-  // Handler to release tickets
   const handleReleaseTickets = async () => {
     if (ticketCount <= 0) {
       setSnackbar({ open: true, message: 'Please enter a valid number of tickets.', severity: 'error' });
@@ -213,8 +200,6 @@ const VendorDashboard: React.FC = () => {
         });
         setIsAdding(true);
         setOpenDialog(false);
-
-        // Fetch updated data including history
         await fetchData();
       } else {
         setSnackbar({ open: true, message: 'Failed to start releasing tickets.', severity: 'error' });
@@ -247,8 +232,6 @@ const VendorDashboard: React.FC = () => {
       if (stopResponse.data.success) {
         setIsAdding(false);
         setSnackbar({ open: true, message: 'Stopped adding new tickets.', severity: 'info' });
-
-        // Fetch updated data including history
         await fetchData();
       } else {
         setSnackbar({ open: true, message: 'Failed to stop releasing tickets.', severity: 'error' });
@@ -281,19 +264,17 @@ const VendorDashboard: React.FC = () => {
   // Handler for signing out
   const handleSignOut = () => {
     signOut();
-    navigate('/'); // Redirect to home after sign-out
+    navigate('/'); 
   };
 
   return (
     <Box sx={{ padding: 4, minHeight: '100vh', backgroundColor: '#f5f5f5', position: 'relative' }}>
-      {/* Logout Icon Button at the top-right corner */}
       <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
         <IconButton onClick={handleSignOut} color="primary" aria-label="logout">
           <LogoutIcon />
         </IconButton>
       </Box>
 
-      {/* Welcome Message */}
       <Typography
         variant="h4"
         sx={{
@@ -362,7 +343,6 @@ const VendorDashboard: React.FC = () => {
         >
           Stop Release Tickets
         </Button>
-        {/* Refresh Button */}
         <Button
           variant="outlined"
           sx = {{backgroundcolor:"#00E676"}}

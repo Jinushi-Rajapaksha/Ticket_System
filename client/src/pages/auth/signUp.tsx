@@ -1,4 +1,3 @@
-// src/components/SignUp.tsx
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import {
   Typography,
@@ -13,7 +12,7 @@ import { AuthContext } from '../../context/authContext';
 interface SignUpProps {
   handleClose: () => void;
   switchToSignIn: () => void;
-  userType: 'vendor' | 'customer'; // Add userType to determine sign-up method
+  userType: 'vendor' | 'customer';
 }
 
 const SignUp: React.FC<SignUpProps> = ({ handleClose, switchToSignIn, userType }) => {
@@ -39,7 +38,7 @@ const SignUp: React.FC<SignUpProps> = ({ handleClose, switchToSignIn, userType }
 
   useEffect(() => {
     if (nameInputRef.current) {
-      nameInputRef.current.focus();  // Focus on name input when component is mounted
+      nameInputRef.current.focus();  
     }
   }, []);
 

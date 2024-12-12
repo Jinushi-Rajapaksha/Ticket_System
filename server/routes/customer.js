@@ -21,7 +21,6 @@ router.post(
 
 router.get('/purchased-tickets', protect, authorize('customer'), viewPurchasedTickets);
 
-// Cancel ticket
 router.post('/cancel', cancelTicket);
 
 module.exports = router;

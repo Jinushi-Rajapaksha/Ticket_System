@@ -1,4 +1,3 @@
-// src/components/TicketHistory.tsx
 import React from 'react';
 import {
   List,

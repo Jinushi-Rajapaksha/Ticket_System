@@ -31,39 +31,31 @@ exports.startVendor = async (req, res) => {
   try {
     const vendor = req.vendor;
 
-    // Check if vendor is already active
     if (vendor.isActive) {
       return res.status(400).json({ success: false, error: 'Vendor is already active.' });
     }
 
-    // Handle validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    // Optionally update ticketsPerRelease if provided in the request body
     const { ticketAmount } = req.body;
     if (ticketAmount !== undefined) {
       vendor.ticketsPerRelease = ticketAmount;
     }
 
-    // Fetch the configuration
     const config = await Configuration.findOne();
     if (!config) {
       return res.status(500).json({ success: false, error: 'Configuration not set.' });
     }
 
-    // Update vendor status
     vendor.isActive = true;
     await vendor.save();
 
-    // Start releasing tickets automatically based on ticketReleaseRate from configuration
     const intervalId = setInterval(async () => {
-      // Acquire mutex lock to ensure thread safety
       const release = await ticketPoolMutex.acquire();
       try {
-        // Check if max capacity reached
         const ticketCount = await Ticket.countDocuments({ sold: false });
         if (ticketCount + ticketAmount > config.maxTicketCapacity) {
           console.log('Max ticket capacity reached. Cannot add more tickets.');
@@ -89,10 +81,9 @@ exports.startVendor = async (req, res) => {
       } catch (err) {
         console.error('Error adding tickets:', err);
       } finally {
-        // Release the lock
         release();
       }
-    }, config.ticketReleaseRate); // Use ticketReleaseRate from configuration
+    }, config.ticketReleaseRate); 
 
     // Store intervalId in memory
     vendorIntervals[vendor.vendorId] = intervalId;
@@ -119,7 +110,6 @@ exports.stopVendor = async (req, res) => {
       delete vendorIntervals[vendor.vendorId];
     }
 
-    // Update vendor status
     vendor.isActive = false;
     await vendor.save();
 
@@ -132,7 +122,7 @@ exports.stopVendor = async (req, res) => {
 
 exports.getHistory = async (req, res) => {
   try {
-    const vendor = req.vendor; // Assuming vendor is attached to req by some auth middleware
+    const vendor = req.vendor;
     const history = await TicketHistory.find({ vendorId: vendor.vendorId }).sort({ date: -1 });
     res.status(200).json({ success: true, data: history });
   } catch (err) {
